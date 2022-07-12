@@ -5,6 +5,8 @@ client.once('ready', () => {
 	console.log('Ready!');
 });
 
+console.log('NODE_ENV:', process.env.NODE_ENV);
+
 client.on('interactionCreate', async (interaction) => {
 	if (!interaction.isCommand()) return;
 

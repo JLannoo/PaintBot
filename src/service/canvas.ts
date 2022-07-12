@@ -10,6 +10,8 @@ const CANVAS_SIZE = Number(process.env.CANVAS_SIZE) || 500;
 const CANVAS_PIXELS = Number(process.env.CANVAS_PIXELS) || 500;
 const PIXEL_SIZE = CANVAS_SIZE / CANVAS_PIXELS;
 
+const STORAGE_PATH = process.env.STORAGE_PATH || 'src/storage';
+
 /**
  *
  * @param {Canvas} canvas Current canvas
@@ -35,12 +37,12 @@ async function drawPixels(canvas: Canvas, pixels: Pixel[]): Promise<Canvas> {
 export async function outputPng(filename: string='canvas.png') {
 	const canvas = createCanvas(CANVAS_SIZE, CANVAS_SIZE);
 
-	const pixels:Pixel[] = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'storage', 'pixels.json'), 'utf8')).pixels;
+	const pixels:Pixel[] = JSON.parse(fs.readFileSync(path.join(STORAGE_PATH, 'pixels.json'), 'utf8')).pixels;
 
 	await drawPixels(canvas, pixels);
 
 	const pngStream = canvas.createPNGStream();
-	const out = fs.createWriteStream(path.join(__dirname, '..', 'storage', filename));
+	const out = fs.createWriteStream(path.join(STORAGE_PATH, filename));
 
 	pngStream.pipe(out);
 	out.on('finish', () => console.log('Finished writing canvas to storage.'));
@@ -53,9 +55,9 @@ export async function outputPng(filename: string='canvas.png') {
  * @param {string} color color of the pixel to be written
  */
 export async function writePixel(x: number, y: number, color: string) {
-	const pixels = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'storage', 'pixels.json'), 'utf8'));
+	const pixels = JSON.parse(fs.readFileSync(path.join(STORAGE_PATH, 'pixels.json'), 'utf8'));
 	pixels.pixels.push({ x, y, color });
-	fs.writeFileSync(path.join(__dirname, '..', 'storage', 'pixels.json'), JSON.stringify(pixels));
+	fs.writeFileSync(path.join(STORAGE_PATH, 'pixels.json'), JSON.stringify(pixels));
 }
 
 /**
@@ -65,7 +67,7 @@ export async function writePixel(x: number, y: number, color: string) {
 export async function getImage() {
 	const canvas = createCanvas(CANVAS_SIZE, CANVAS_SIZE);
 
-	const pixels:Pixel[] = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'storage', 'pixels.json'), 'utf8')).pixels;
+	const pixels:Pixel[] = JSON.parse(fs.readFileSync(path.join(STORAGE_PATH, 'pixels.json'), 'utf8')).pixels;
 
 	await drawPixels(canvas, pixels);
 
@@ -81,5 +83,5 @@ export async function clear() {
 	const object = {
 		pixels: [],
 	};
-	fs.writeFileSync(path.join(__dirname, '..', 'storage', 'pixels.json'), JSON.stringify(object));
+	fs.writeFileSync(path.join(STORAGE_PATH, 'pixels.json'), JSON.stringify(object));
 }

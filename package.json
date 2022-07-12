@@ -6,7 +6,9 @@
   "scripts": {
     "tsc": "tsc",
     "dev": "ts-node-dev ./src/index.ts",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "set NODE_ENV=production& tsc && node ./build/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "pm2": "set NODE_ENV=production& tsc && pm2 start"
   },
   "keywords": [],
   "author": "",

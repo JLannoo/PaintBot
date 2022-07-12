@@ -14,7 +14,9 @@ console.log('Setting commands...');
 
 const commands = new Collection<unknown, any>();
 const commandsPath = path.join(__dirname, '..', 'commands');
-const commandFiles = fs.readdirSync(commandsPath).filter((file) => file.endsWith('.ts'));
+
+const fileExtension = process.env.NODE_ENV === 'production' ? '.js' : '.ts';
+const commandFiles = fs.readdirSync(commandsPath).filter((file) => file.endsWith(fileExtension));
 
 for (const file of commandFiles) {
 	const filePath = path.join(commandsPath, file);
@@ -26,7 +28,10 @@ const rest = new REST({ version: '10' }).setToken(TOKEN);
 const jsonCommands = commands.map((command) => command.data.toJSON());
 
 rest.put(Routes.applicationCommands(CLIENT_ID), { body: jsonCommands })
-	.then(() => console.log('Successfully registered application commands.'))
+	.then(() => {
+		console.log('Successfully registered application commands.');
+		console.log('Registered commands:', commands.map((command) => command.data.name));
+	})
 	.catch(console.error);
 
 export default commands;
